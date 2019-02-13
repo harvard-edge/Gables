@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity$PlaceholderFragment">
+
+    <SeekBar
+        android:id="@+id/seekBar_nFlops"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:max="@integer/maxMixOpIntensityLog2"
+        android:progress="@integer/maxMixOpIntensityLog2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtBox_nFlops" />
+
+    <TextView
+        android:id="@+id/txtBox_nFlops"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="left|center"
+        android:text="Number of FLOPS"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBox_totalMem" />
+
+    <SeekBar
+        android:id="@+id/seekBar_workFraction"
+        style="@android:style/Widget.SeekBar"
+        android:layout_width="200dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:max="8"
+        android:progress="@integer/workFractionDefault"
+        app:layout_constraintEnd_toStartOf="@+id/txtBox_workFractionGPU"
+        app:layout_constraintStart_toEndOf="@+id/txtBox_workFractionCPU"
+        app:layout_constraintTop_toBottomOf="@+id/txtBox_workFraction" />
+
+
+    <TextView
+        android:id="@+id/txtBox_totalMem"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:gravity="left|center"
+        android:text="Total Mem Alloc. (MB)"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekBar_totalMem"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:max="@integer/maxMixerMemoryLog2"
+        android:progress="@integer/maxMixerMemoryLog2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtBox_totalMem" />
+
+    <TextView
+        android:id="@+id/txtBox_maxThreads4"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="left|center"
+        android:text="GPU Work Items"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBox_maxThreads6" />
+
+    <TextView
+        android:id="@+id/txtBox_maxThreads6"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:gravity="left|center"
+        android:text="GPU Workgroup Size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBox_maxThreads2" />
+
+    <TextView
+        android:id="@+id/txtBox_maxThreads2"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:gravity="left|center"
+        android:text="CPU Thread Count"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBox_nFlops" />
+
+    <TextView
+        android:id="@+id/txtBox_workFraction"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:gravity="left|center"
+        android:text="Workload Offload Fraction (f):"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+    <SeekBar
+        android:id="@+id/seekBar_maxGPUWorkItems"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:max="16"
+        android:progress="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/txtBox_maxThreads"
+        app:layout_constraintTop_toTopOf="@+id/txtBox_maxThreads4" />
+
+    <SeekBar
+        android:id="@+id/seekBar_maxGPUWorkgroupSize"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:max="16"
+        android:progress="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/txtBox_maxThreads"
+        app:layout_constraintTop_toTopOf="@+id/txtBox_maxThreads6" />
+
+    <SeekBar
+        android:id="@+id/seekBar_maxCPUThreads"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:max="16"
+        android:progress="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/txtBox_maxThreads"
+        app:layout_constraintTop_toTopOf="@+id/txtBox_maxThreads2" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top" />
+
+    <ToggleButton
+        android:id="@+id/toggle_runMixer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtBox_workFractionGPU"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="GPU"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/seekBar_workFraction" />
+
+    <TextView
+        android:id="@+id/txtBox_workFractionCPU"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="24dp"
+        android:text="CPU"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtBox_workFractionGPU"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="342dp"
+        android:layout_height="2dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/txtBox_workFraction"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBox_maxThreads4" />
+
+</android.support.constraint.ConstraintLayout>

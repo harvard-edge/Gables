@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Gables</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="tab1_title">CPU Roofline</string>
+    <string name="tab2_title">GPU Roofline</string>
+    <string name="tab3_title">Gables</string>
+    <string name="tab1_button">Generate</string>
+
+    <string-array name="roofline_models">
+        <item>CPU</item>
+        <item>CPU+GPU</item>
+        <item>Others</item>
+    </string-array>
+</resources>

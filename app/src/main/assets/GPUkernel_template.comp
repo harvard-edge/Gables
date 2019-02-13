@@ -1,0 +1,64 @@
+#version 320 es
+
+#define KERNEL1(a,b,c)   ((a) = (b) + (c))
+#define KERNEL2(a,b,c)   ((a) = (a)*(b) + (c))
+
+#define REP2(S)        S ;        S
+#define REP4(S)   REP2(S);   REP2(S)
+#define REP8(S)   REP4(S);   REP4(S)
+#define REP16(S)  REP8(S);   REP8(S)
+#define REP32(S)  REP16(S);  REP16(S)
+#define REP64(S)  REP32(S);  REP32(S)
+#define REP128(S) REP64(S);  REP64(S)
+#define REP256(S) REP128(S); REP128(S)
+#define REP512(S) REP256(S); REP256(S)
+#define REP1024(S) REP512(S); REP512(S)
+#define REP2048(S) REP1024(S); REP1024(S)
+#define REP4096(S) REP2048(S); REP2048(S)
+#define REP8192(S) REP4096(S); REP4096(S)
+#define REP16384(S) REP8192(S); REP8192(S)
+#define REP32768(S) REP16384(S); REP16384(S)
+
+layout(local_size_x = XXX_LAYOUT_SIZE_XXX, local_size_y = 1, local_size_z = 1) in;
+
+layout(binding = 0) readonly buffer Params {
+    uint data[];
+} params;
+layout(binding = 1) readonly buffer IArray {
+    float data[];
+} ibuff;
+layout(binding = 2) writeonly buffer OArray {
+    uint data[];
+} retval;
+
+void main()
+{
+  uint wsssize = params.data[0];
+  uint ntrials = params.data[1];
+
+  uint total_thr = gl_NumWorkGroups.x * gl_WorkGroupSize.x;
+  uint elem_per_thr = (wsssize + (total_thr - 1u)) / total_thr;
+
+  uint start_idx = gl_GlobalInvocationID.x;
+  uint end_idx = start_idx + elem_per_thr * total_thr;
+
+  uint stride_idx = total_thr;
+
+  if (start_idx > wsssize)
+    start_idx = wsssize;
+  if (end_idx > wsssize)
+    end_idx = wsssize;
+
+  float alpha = 0.5;
+  for (uint j = 0u; j < ntrials; ++j) {
+    for (uint i = start_idx; i < end_idx; i += stride_idx) {
+      float beta = 0.8;
+      XXX_KERNEL_FLOPS_PREFIX_XXX(beta, ibuff.data[i], alpha)XXX_KERNEL_FLOPS_POSTFIX_XXX;
+      retval.data[3] = uint(beta);
+    }
+  }
+
+  retval.data[0] = 4u;
+  retval.data[1] = 2u;
+  retval.data[3] = 0u;
+}

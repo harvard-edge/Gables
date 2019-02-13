@@ -1,0 +1,47 @@
+#built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Windows thumbnail db
+Thumbs.db
+
+# Android Studio
+*.iml
+.idea
+.gradle
+build/
+.navigation
+captures/
+output.json
+
+#NDK
+obj/
+.externalNativeBuild
+
+# Crashlytics configuations
+com_crashlytics_export_strings.xml
+
+# Signing files
+.signing/
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="maxGablesMemory">64</integer>
+
+    <integer name="maxCPUMemoryLog2">8</integer>
+    <integer name="maxCPUOpIntensityLog2">10</integer>
+
+    <integer name="maxGPUMemoryLog2">8</integer>
+    <integer name="maxGPUOpIntensityLog2">12</integer>
+
+    <integer name="maxHEXMemoryLog2">8</integer>
+    <integer name="maxHEXOpIntensityLog2">12</integer>
+
+    <integer name="workFractionDefault">6</integer>
+    <integer name="maxMixerMemoryLog2">9</integer>
+    <integer name="maxMixOpIntensityLog2">10</integer>
+</resources>

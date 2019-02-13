@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity$PlaceholderFragment">
+
+    <TextView
+        android:id="@+id/txtBox_opIntensity"
+        android:layout_width="0dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:gravity="left|center"
+        android:text="Ops (FLOPS/byte)"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar_maxMemory" />
+
+    <SeekBar
+        android:id="@+id/seekBar_opIntensity"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:max="@integer/maxGPUOpIntensityLog2"
+        android:progress="@integer/maxGPUOpIntensityLog2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/txtBox_opIntensity"
+        app:layout_constraintTop_toTopOf="@+id/txtBox_opIntensity" />
+
+    <SeekBar
+        android:id="@+id/seekBar_maxMemory"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="32dp"
+        android:max="@integer/maxGPUMemoryLog2"
+        android:progress="@integer/maxGPUMemoryLog2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView_maxMemory" />
+
+    <TextView
+        android:id="@+id/txtBox_maxWorkGroups"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:gravity="left|center"
+        android:text="Work Group Count"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/graph" />
+
+    <TextView
+        android:id="@+id/txtBox_maxThreads"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:gravity="left|center"
+        android:text="Work Group Size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBox_maxWorkGroups" />
+
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph"
+        android:layout_width="320dp"
+        android:layout_height="203dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top" />
+
+    <SeekBar
+        android:id="@+id/seekBar_maxWorkGroupCount"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="32dp"
+        android:max="10"
+        android:progress="10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtBox_maxWorkGroups" />
+
+    <SeekBar
+        android:id="@+id/seekBar_maxWorkGroupSize"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="140dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="8dp"
+        android:max="8"
+        android:progress="8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/txtBox_maxThreads"
+        app:layout_constraintTop_toTopOf="@+id/txtBox_maxThreads" />
+
+    <ToggleButton
+        android:id="@+id/toggle_runRoofline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/tab1_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_maxMemory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Memory Alloc."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBox_maxThreads" />
+
+</android.support.constraint.ConstraintLayout>
