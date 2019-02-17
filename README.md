@@ -12,13 +12,13 @@ The source code that is included here can be built into an Android APK, pushed t
 
 * You must be familiar with Android Studio to build the APK.
 * You have a device based on the Qualcomm chipset. 
-* You must have R/W permissions on the storage.
+* You must grant the app read/write permissions
 
-# Step-by-step Instructions
+# Step-by-step
 
 ## Install Android Studio
 
-Coming soon.
+You can download the latest version of Android Studio [here](https://developer.android.com/studio/), and follow the instructions to install.
 
 ## Import the GitHub Repo
 
@@ -26,19 +26,27 @@ You can directly import GitHub projects into Android Studio. In the Android Stud
 
 ## Build the APK
 
-Coming soon.
+Android Studio should automatically recognize the project is using the Gradle build system. If so you should be able to press `Build>Make Project` and it will attempt to build the project.
+
+We use CMake to build the C++ compenents of the app which interface with the Java code through the JNI. In order to build the app you should have CMake and the Android NDK installed and in your path. Usually Android studio will offer to install these automatically if you attempt to build without these available.
 
 ## Install the APK
 
-Coming soon.
+Once the build has completed successfully, you will be able to press `Run>Run 'app'` in the toolbar and then Android Studio will prompt you to select a device to install the APK on.
+
+We recommend running Gables on a real world device for testing. The device should have [developer options](https://developer.android.com/studio/debug/dev-options) enabled and USB debugging turned on. The device will then appear in the run prompt. Selecting this device will install the APK on it.
+
+If the name of the device doesn't appear correctly in the prompt, check that the device is conencted in the correct file transfer mode (this can usually be changed in a persistent notification on the device itself). The correct file transfer mode varies depending on device but once the correct mode is selected the device name will be visible in the run prompt.
+
+If you do wish to run Gables on an emulator, we currently only support emulator images based on the armeabi-v7a, or arm64-v8a instruction sets. Support for other architectures is coming soon.
 
 ## Run the APK
 
-Coming soon.
+The Gables app icon should now be visible in the launcher of the device in question.
 
 ## Generate the Plots
 
-The current version of the app first generates the data, and then processes the data offline to generate the plots. See step-by-step instructions on how to build, run and generate the offline plots.
+The current version of the app first generates the data, and then processes the data offline to generate the plots. See [step-by-step](step_by_step.md) instructions on how to build, run and generate the offline plots.
 
 # Limitations and Restrictions
 
