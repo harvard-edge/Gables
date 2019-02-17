@@ -1,6 +1,6 @@
 # Gables
 
-Welcome to the _Gables: Roofline Model for Mobile SoCs._ The code that is included in here is the code that is used to generate the roofline model for mobile SoCs CPUs/GPUs and DSP. The code has been tested primarily on the following two devices: (1) a Qualcomm 835 Development Kit and (2) Pixel 2/3 smartphones, but it should work on other devices. 
+Welcome to the [_Gables: Roofline Model for Mobile SoCs._](http://wisc.edu/multifacet/gables/) The code that is included in here is the code that is used to generate the roofline model for mobile SoCs CPUs/GPUs and DSP. The code has been tested primarily on the following two devices: (1) a Qualcomm 835 Development Kit and (2) Pixel 2/3 smartphones, but it should work on other devices. 
 
 <p align="center"> 
 <img src="https://www.intrinsyc.com/wp-content/uploads/2017/05/835-Front-WithShadow.jpg" height="300"> <img src="https://cdn2.gsmarena.com/vv/pics/google/google-pixel-3-4.jpg" height="300">
