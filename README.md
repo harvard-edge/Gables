@@ -82,5 +82,5 @@ Please email your questions and concerns to vj@eecs.harvard.edu and dinge@colleg
 # Credits
 
 The inspiration for the mobile version of the code comes from the [CS Roofline Toolkit
-](https://bitbucket.org/berkeleylab/cs-roofline-toolkit). The APK introduces numerous updates and changes to the code, and includes numerous new code updates for the OpenGL ES and Qualcomm DSP. 
+](https://bitbucket.org/berkeleylab/cs-roofline-toolkit). The APK introduces updates and changes to the code, and includes numerous new code additions such as support for GPU OpenGL ES and the DSPs.
 
