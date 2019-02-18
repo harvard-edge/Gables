@@ -45,3 +45,8 @@ com_crashlytics_export_strings.xml
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Gables specific
+gnuplots/
+output/
+*.gables
