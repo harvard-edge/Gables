@@ -807,7 +807,7 @@ def Main(idir, odir, gdir):
     print("Generating plots...")
     gnuplot_filename = PlotRoofline(roofline_raw_output, odir, gdir)
     print("\t Roofline plot is in " + gnuplot_filename)
-    os.system('gnuplot %s' % gnuplot_filename)
+    os.system('gnuplot -p %s' % gnuplot_filename)
 
 
 if __name__ == "__main__":
