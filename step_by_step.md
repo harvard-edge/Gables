@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Ensure that you have followed the steps in the [README.md](README.md) to build and install the APK onto a Android device. You should now be able to open the Gables app.
+Ensure that you have followed the steps in the [README](README.md) to build and install the APK onto a Android device. You should now be able to open the Gables app.
 
 In this example we will be generating a CPU rooline plot, but the process for generating a GPU roofline is very similar.
 
@@ -15,11 +15,11 @@ Open the Gables app and if necessary select yes on the prompt asking for permiss
 You should transfer all of the files from the `CPURoofline` folder on the phone to a computer. You can do this in a couple of ways:
 
 1. Use a file manager app to browse to the folder on the phone, highlight the files and then press `share` to share them with yourself.
-2. Use [adb](https://developer.android.com/studio/command-line/adb) to extract the files. If you already have an Android device connected with USB debugging enabled, you can use the `abd` tool (located in the Android SDK) to extract the files to a folder on your computer called CPURoofline using the following command: `adb pull /sdcard/CPURoofline/ .`
+2. Use [adb](https://developer.android.com/studio/command-line/adb) to extract the files. If you already have an Android device connected with USB debugging enabled, you can use the `adb` tool (located in the Android SDK) to extract the files to a folder on your computer called CPURoofline using the following command: `adb pull /sdcard/CPURoofline/ .`
 
 ## Processing Data
 
-The app currently uses a separate Python2 script to process the files generated when running a test in order to produce the roofline plots. The path to this Python script is `edge-gables/app/utils/plotting/scripts/gables.py`. In order to generate a plot from the files extracted in the previous section you can use the script as follows:
+The app currently uses a separate Python2 script to process the files generated when running a test in order to produce the roofline plots. The path to this Python script is `Gables/app/utils/plotting/scripts/gables.py`. In order to generate a plot from the files extracted in the previous section you can use the script as follows:
 
 `python gables.py -d [DIRECTORY_CONTAINING_EXTRACTED_FILES]`
 
