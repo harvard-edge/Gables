@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Ensure that you have followed the steps in the [README.md](README.md) to build and install the APK onto a device of your choosing. You should now be able to open the Gables app.
+Ensure that you have followed the steps in the [README.md](README.md) to build and install the APK onto a Android device. You should now be able to open the Gables app.
 
 In this example we will be generating a CPU rooline plot, but the process for generating a GPU roofline is very similar.
 
@@ -19,10 +19,14 @@ You should transfer all of the files from the `CPURoofline` folder on the phone 
 
 ## Processing Data
 
-The app currently uses a separate Python2 script to process the files generated when running a test in order to produce the roofline plots. The path to this Python script is `Gables/app/utils/plotting/scripts/gables.py`. In order to generate a plot from the files extracted in the previous section you can use the script as follows:
+The app currently uses a separate Python2 script to process the files generated when running a test in order to produce the roofline plots. The path to this Python script is `edge-gables/app/utils/plotting/scripts/gables.py`. In order to generate a plot from the files extracted in the previous section you can use the script as follows:
 
 `python gables.py -d [DIRECTORY_CONTAINING_EXTRACTED_FILES]`
 
 This will produce a file `roofline.gnu` in the output directory, which can be viewed using the [gnuplot](http://www.gnuplot.info/) tool using the following command:
 
 `gnuplot gnuplots/roofline.gnu -p`
+
+We see we have generated our CPU roofline graph:
+
+![Example CPURoofline](images/CPURooflineExamplePlot.png)
