@@ -22,7 +22,7 @@ You can download the latest version of Android Studio [here](https://developer.a
 
 ## Import the GitHub Repo
 
-You can directly import GitHub projects into Android Studio. In the Android Studio window, click VCS -> Checkout -> Git and import this repository address `https://github.com/jveejay/Gables`. The GitHub repo will be created as a new project in android studio. Alternatively, you can download the repo to your filesystem and manually import it as a new project into Android Studio. We recommend using the Git repo directly as you can get the latest updates.
+You can directly import GitHub projects into Android Studio. In the Android Studio window, click VCS -> Checkout -> Git and import this repository address `https://github.com/harvard-edge/Gables`. The GitHub repo will be created as a new project in android studio. Alternatively, you can download the repo to your filesystem and manually import it as a new project into Android Studio. We recommend using the Git repo directly as you can get the latest updates.
 
 ## Build the APK
 
