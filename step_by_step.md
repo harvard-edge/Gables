@@ -25,8 +25,10 @@ The app currently uses a separate Python2 script to process the files generated 
 
 This will produce a file `roofline.gnu` in the output directory, which can be viewed using the [gnuplot](http://www.gnuplot.info/) tool using the following command:
 
-`gnuplot gnuplots/roofline.gnu -p`
+`gnuplot output/roofline.gnu -p`
 
 We see we have generated our CPU roofline graph:
 
-![Example CPURoofline](images/CPURooflineExamplePlot.png)
+<p align="center"> 
+<img src="images/CPURooflineExamplePlot.png" height="500">
+</p>
