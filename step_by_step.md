@@ -21,7 +21,7 @@ You should transfer all of the files from the `CPURoofline` folder on the phone 
 
 The app currently uses a separate Python2 script to process the files generated when running a test in order to produce the roofline plots. The path to this Python script is `Gables/app/utils/plotting/scripts/gables.py`. In order to generate a plot from the files extracted in the previous section you can use the script as follows:
 
-`python gables.py -d [DIRECTORY_CONTAINING_EXTRACTED_FILES] -g output/`
+`python gables.py -d [DIRECTORY_CONTAINING_EXTRACTED_FILES] -g ../gnuplots`
 
 This will produce a file `roofline.gnu` in the `output/` directory, which should automatically open. Alternatively the plot can be viewed manually using the [gnuplot](http://www.gnuplot.info/) tool using the following command:
 
