@@ -140,49 +140,45 @@ Java_com_google_gables_Roofline_CPUExecute(JNIEnv *env, jobject obj,
 
         uint64_t nNew = 0;
         for (uint64_t n = 1; n <= nsize;) {
-            uint64_t ntrials = nsize / n;
-            if (ntrials < 1)
-                ntrials = 1;
+            uint64_t t = 10;
 
-            for (uint64_t t = 1; t <= ntrials; t = t * 2) { // working set - ntrials
-                double startTime, endTime;
-                int bytes_per_elem, flops_per_elem, mem_accesses_per_elem;
+            double startTime, endTime;
+            int bytes_per_elem, flops_per_elem, mem_accesses_per_elem;
 
 #pragma omp barrier
 
 #pragma omp master
-                {
-                    startTime = getOMPTime();
-                }
+            {
+                startTime = getOMPTime();
+            }
 
-                kptr(n, t, &buf[nid], &bytes_per_elem, &flops_per_elem, &mem_accesses_per_elem);
+            kptr(n, t, &buf[nid], &bytes_per_elem, &flops_per_elem, &mem_accesses_per_elem);
 
 #pragma omp barrier
 
 #pragma omp master
-                {
-                    endTime = getOMPTime();
-                    double total_seconds = endTime - startTime;
+            {
+                endTime = getOMPTime();
+                double total_seconds = endTime - startTime;
 
-                    uint64_t working_set_size = n * nThreads;
-                    uint64_t total_bytes =
-                            t * working_set_size * bytes_per_elem * mem_accesses_per_elem;
-                    uint64_t total_flops = t * working_set_size * nFlops * flops_per_elem;
+                uint64_t working_set_size = n * nThreads;
+                uint64_t total_bytes =
+                        t * working_set_size * bytes_per_elem * mem_accesses_per_elem;
+                uint64_t total_flops = t * working_set_size * nFlops * flops_per_elem;
 
-                    results << std::right << std::setw(12) << working_set_size * bytes_per_elem
-                            << std::right << std::setw(12) << t
-                            << std::right << std::setw(15) << total_seconds * 1000000
-                            << std::right << std::setw(12) << total_bytes
-                            << std::right << std::setw(12) << total_flops
-                            << std::endl;
+                results << std::right << std::setw(12) << working_set_size * bytes_per_elem
+                        << std::right << std::setw(12) << t
+                        << std::right << std::setw(15) << total_seconds * 1000000
+                        << std::right << std::setw(12) << total_bytes
+                        << std::right << std::setw(12) << total_flops
+                        << std::endl;
 
-                    double gflops = ((float) total_bytes / GiB) / total_seconds;
-                    double bwidth = ((float) total_flops / GFLOPS) / total_seconds;
+                double gflops = ((float) total_bytes / GiB) / total_seconds;
+                double bwidth = ((float) total_flops / GFLOPS) / total_seconds;
 
-                    LOGD("Finished nsize: %llu; trial: %llu (%.5f): [%.4f GiB/s %.4f GFLOPS/s] ", n,
-                         t,
-                         total_seconds, gflops, bwidth);
-                }
+                LOGD("Finished nsize: %llu; trial: %llu (%.5f): [%.4f GiB/s %.4f GFLOPS/s] ", n,
+                     t,
+                     total_seconds, gflops, bwidth);
             }
 
             nNew = 1.1 * n;

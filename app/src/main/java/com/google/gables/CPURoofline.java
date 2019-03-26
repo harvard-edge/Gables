@@ -29,6 +29,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.google.gables.Roofline.CPU_Execute;
 import static com.google.gables.Utils.ExtStoragePermissions_t.EXT_STORAGE_RW;
@@ -359,9 +362,12 @@ public class CPURoofline extends Fragment {
                     String strCurrProgress = String.valueOf(Math.round(100.0 * progressCounter / progressTotal));
                     String message = "Running " + i + " FLOPS/byte with " + j + " threads.";
                     publishProgress(strCurrProgress, message);
+                    publishProgress(strCurrProgress, message);
                     Log.i(TAG, "Starting " + i + " FLOPS/byte with " + j + " threads.");
 
                     String output = CPU_Execute(mem, j, i, neon);
+
+                    generatePlotData(processRawData(output));
 
                     if (isCancelled()) {
                         message = "Cancelling...";
@@ -408,6 +414,90 @@ public class CPURoofline extends Fragment {
             if (gProcessDialog.isShowing()) {
                 gProcessDialog.dismiss();
             }
+        }
+
+        void generatePlotData(List<CPUDataPoint> values) {
+            List<Double> gflops = new ArrayList<>();
+            List<Double> flopsPerByte = new ArrayList<>();
+            for (CPUDataPoint value : values) {
+                gflops.add(value.getTotalFlops()/value.getTotalSeconds());
+                flopsPerByte.add(value.getTotalFlops() / value.getTotalBytes());
+            }
+            System.out.println(gflops.toString());
+            System.out.println(flopsPerByte.toString());
+        }
+
+        List<CPUDataPoint> processRawData(String data) {
+            List<String> rows = Arrays.asList(data.trim().split("\\s*\\n\\s*"));
+            List<CPUDataPoint> points = new ArrayList<>();
+            for (String row : rows) {
+                if (row.contains("META_DATA")) {
+                    break;
+                } else {
+                    points.add(CPUDataPoint.parseCPUDataPoint(row));
+                }
+            }
+            return points;
+        }
+    }
+
+    static class CPUDataPoint {
+
+        double distinctBytes;
+        double nTrials;
+        double totalSeconds;
+        double totalBytes;
+        double totalFlops;
+
+        public static CPUDataPoint parseCPUDataPoint(String input) {
+            String[] values = input.split("\\s+");
+            CPUDataPoint point = new CPUDataPoint();
+            point.setDistinctBytes(Double.valueOf(values[0]));
+            point.setnTrials(Double.valueOf(values[1]));
+            point.setTotalSeconds(Double.valueOf(values[2]));
+            point.setTotalBytes(Double.valueOf(values[3]));
+            point.setTotalFlops(Double.valueOf(values[4]));
+            return point;
+        }
+
+        public double getDistinctBytes() {
+            return distinctBytes;
+        }
+
+        public void setDistinctBytes(double distinctBytes) {
+            this.distinctBytes = distinctBytes;
+        }
+
+        public double getnTrials() {
+            return nTrials;
+        }
+
+        public void setnTrials(double nTrials) {
+            this.nTrials = nTrials;
+        }
+
+        public double getTotalSeconds() {
+            return totalSeconds;
+        }
+
+        public void setTotalSeconds(double totalSeconds) {
+            this.totalSeconds = totalSeconds;
+        }
+
+        public double getTotalBytes() {
+            return totalBytes;
+        }
+
+        public void setTotalBytes(double totalBytes) {
+            this.totalBytes = totalBytes;
+        }
+
+        public double getTotalFlops() {
+            return totalFlops;
+        }
+
+        public void setTotalFlops(double totalFlops) {
+            this.totalFlops = totalFlops;
         }
     }
 }

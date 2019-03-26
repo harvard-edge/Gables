@@ -17,14 +17,14 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
         // Encapsulates your external native build configurations.
         externalNativeBuild {
             // Encapsulates your CMake build configurations.
             cmake {
                 // these flags are set in the CMake file, since they follow *after* default AndroidStudio args
-            }
-            ndk {
             }
         }
     }
