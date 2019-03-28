@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.chaquo.python'
 
 android {
     signingConfigs {
@@ -26,6 +27,12 @@ android {
             cmake {
                 // these flags are set in the CMake file, since they follow *after* default AndroidStudio args
             }
+        }
+        python {
+            pip {
+                install "numpy==1.14.2"
+            }
+            staticProxy("gables.gables_processor")
         }
     }
     buildTypes {

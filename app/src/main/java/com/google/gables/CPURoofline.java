@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import gables.gables_processor.GablesPython;
+
 import static com.google.gables.Roofline.CPU_Execute;
 import static com.google.gables.Utils.ExtStoragePermissions_t.EXT_STORAGE_RW;
 import static com.google.gables.Utils.MiB;
@@ -43,7 +45,7 @@ import static com.google.gables.Utils.log;
 
 public class CPURoofline extends Fragment {
     private static final String TAG = CPURoofline.class.getName();
-
+    private GraphView graphview;
     private ProgressDialog gProcessDialog;
     private String gResultsDir = "CPURoofline";
 
@@ -51,12 +53,13 @@ public class CPURoofline extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
     }
 
-    void drawGraph(View rootView) {
-        // Setup a graph view
-        GraphView graphview = rootView.findViewById(R.id.graph);
+    void drawGraph(float[][] data) {
+        float[] x = data[1];
+//        float[] dram = data[2];
+//        float[] l1 = data[3];
+//        float[] l2 = data[4];
 
         // activate horizontal zooming and scrolling
         graphview.getViewport().setScalable(false);
@@ -64,29 +67,37 @@ public class CPURoofline extends Fragment {
         graphview.getViewport().setScalableY(false);
         graphview.getViewport().setScrollableY(true);
 
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 0),
-                new DataPoint(1, 7.5),
-                new DataPoint(2, 7.5),
-                new DataPoint(4, 7.5),
-                new DataPoint(8, 7.5),
-                new DataPoint(16, 7.5)
-        });
+        for(int i = 1; i < 4; i++) {
+            float[] ys = data[i];
+            DataPoint[] points = new DataPoint[ys.length];
+
+            for (int j = 0; j < ys.length; j++) {
+                float y = ys[j];
+                points[j] = new DataPoint(x[j], y);
+            }
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<>(points);
+            series.setTitle("CPU Roofline");
+            series.setBackgroundColor(Color.GRAY);
+            series.setColor(Color.BLACK);
+            series.setDrawDataPoints(false);
+            series.setDataPointsRadius(10);
+            series.setThickness(7);
+            graphview.addSeries(series);
+        }
+//        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
+//                new DataPoint(0, 0),
+//                new DataPoint(1, 7.5),
+//                new DataPoint(2, 7.5),
+//                new DataPoint(4, 7.5),
+//                new DataPoint(8, 7.5),
+//                new DataPoint(16, 7.5)
+//        });
 
         GridLabelRenderer gridLabel = graphview.getGridLabelRenderer();
         gridLabel.setHorizontalAxisTitle("Operational Intensity (FLOPS/byte)");
         gridLabel.setVerticalAxisTitle("Performance (GFLOPS)");
 
         graphview.setTitle("CPU Roofline");
-
-        series.setTitle("CPU Roofline");
-        series.setBackgroundColor(Color.GRAY);
-        series.setColor(Color.BLACK);
-        series.setDrawDataPoints(false);
-        series.setDataPointsRadius(10);
-        series.setThickness(7);
-
-        graphview.addSeries(series);
     }
 
     /**
@@ -262,8 +273,7 @@ public class CPURoofline extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_cpu_roofline, container, false);
-
-        drawGraph(rootView);
+        graphview = rootView.findViewById(R.id.graph);
         setupSliders(rootView);
         setupButton(rootView);
 
@@ -414,6 +424,7 @@ public class CPURoofline extends Fragment {
             if (gProcessDialog.isShowing()) {
                 gProcessDialog.dismiss();
             }
+            drawGraph(new GablesPython().processCPURoofline());
         }
 
         void generatePlotData(List<CPUDataPoint> values) {
