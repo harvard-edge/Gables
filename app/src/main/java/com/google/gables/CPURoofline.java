@@ -18,6 +18,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
@@ -29,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +56,7 @@ import static com.google.gables.Utils.log;
 
 public class CPURoofline extends Fragment {
     private static final String TAG = CPURoofline.class.getName();
-    private GraphView graphview;
+    private LineChart chart;
     private ProgressDialog gProcessDialog;
     private String gResultsDir = "CPURoofline";
 
@@ -56,48 +67,69 @@ public class CPURoofline extends Fragment {
     }
 
     void drawGraph(float[][] data) {
-        float[] x = data[1];
-//        float[] dram = data[2];
-//        float[] l1 = data[3];
-//        float[] l2 = data[4];
-
-        // activate horizontal zooming and scrolling
-        graphview.getViewport().setScalable(false);
-        graphview.getViewport().setScrollable(true);
-        graphview.getViewport().setScalableY(false);
-        graphview.getViewport().setScrollableY(true);
-
-        for(int i = 1; i < 4; i++) {
+        LineData lineData = new LineData();
+        float[] x = data[2];
+        for(int i = 2; i <= 4; i++) {
             float[] ys = data[i];
-            DataPoint[] points = new DataPoint[ys.length];
+            List<Entry> entries = new ArrayList<Entry>();
 
             for (int j = 0; j < ys.length; j++) {
-                float y = ys[j];
-                points[j] = new DataPoint(x[j], y);
+                entries.add(new Entry(scaleCbr(x[j]), scaleCbr(ys[j])));
             }
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<>(points);
-            series.setTitle("CPU Roofline");
-            series.setBackgroundColor(Color.GRAY);
-            series.setColor(Color.BLACK);
-            series.setDrawDataPoints(false);
-            series.setDataPointsRadius(10);
-            series.setThickness(7);
-            graphview.addSeries(series);
+            LineDataSet dataSet = null;
+            switch (i) {
+                case 2:
+                    // DRAM
+                    dataSet = new LineDataSet(entries, "DRAM");
+                    dataSet.setColor(Color.RED);
+                    break;
+
+                case 3:
+                    // L1
+                    dataSet = new LineDataSet(entries, "L1");
+                    dataSet.setColor(Color.GREEN);
+                    break;
+
+                case 4:
+                    // L2
+                    dataSet = new LineDataSet(entries, "L2");
+                    dataSet.setColor(Color.BLUE);
+                    break;
+            }
+            dataSet.setDrawCircles(false);
+            lineData.addDataSet(dataSet);
         }
-//        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-//                new DataPoint(0, 0),
-//                new DataPoint(1, 7.5),
-//                new DataPoint(2, 7.5),
-//                new DataPoint(4, 7.5),
-//                new DataPoint(8, 7.5),
-//                new DataPoint(16, 7.5)
+        Log.d("GRAPH", "Drawing graph");
+        chart.getAxisRight().setEnabled(false);
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+//        chart.getAxisLeft().setValueFormatter(new IAxisValueFormatter() {
+//            @Override
+//            public String getFormattedValue(float value, AxisBase axis) {
+//                DecimalFormat mFormat;
+//                mFormat = new DecimalFormat("##.###");
+//                return "10^" + mFormat.format(unScaleCbr(value));
+//            }
 //        });
+//        chart.getXAxis().setValueFormatter(new ValueFormatter() {
+//            @Override
+//            public String getFormattedValue(float value, AxisBase axis) {
+//                DecimalFormat mFormat;
+//                mFormat = new DecimalFormat("##.###");
+//                return "10^" + mFormat.format(unScaleCbr(value));
+//            }
+//        });
+        chart.setDescription(new Description());
+        chart.setData(lineData);
+        chart.invalidate();
+    }
 
-        GridLabelRenderer gridLabel = graphview.getGridLabelRenderer();
-        gridLabel.setHorizontalAxisTitle("Operational Intensity (FLOPS/byte)");
-        gridLabel.setVerticalAxisTitle("Performance (GFLOPS)");
+    private float scaleCbr(double cbr) {
+        return (float)(Math.log10(cbr));
+    }
 
-        graphview.setTitle("CPU Roofline");
+    private float unScaleCbr(double cbr) {
+        double calcVal = Math.pow(10, cbr);
+        return (float)(calcVal);
     }
 
     /**
@@ -273,10 +305,10 @@ public class CPURoofline extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_cpu_roofline, container, false);
-        graphview = rootView.findViewById(R.id.graph);
+        chart = rootView.findViewById(R.id.graph);
         setupSliders(rootView);
         setupButton(rootView);
-
+        drawGraph(new GablesPython().processCPURoofline());
         return rootView;
     }
 

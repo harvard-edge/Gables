@@ -71,8 +71,8 @@ def calculate_bandwidths(summary):
     print(band_list)
     summary.max_dram = band_list[-1][0]
     try:
-        summary.max_l1 = band_list[-2][0]
-        summary.max_l2 = band_list[-3][0]
+        summary.max_l2 = band_list[-2][0]
+        summary.max_l1 = band_list[-3][0]
     except:
         pass
 
