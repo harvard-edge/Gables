@@ -11,7 +11,7 @@ set(CMAKE_PREFIX_PATH /vendor/lib/rfsa/adsp/)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
 
-set(GABLES_FLAGS "-fopenmp -fno-tree-vectorize -ffast-math -Wdeprecated-register")
+set(GABLES_FLAGS "-fopenmp -O2 -fno-tree-vectorize -ffast-math -Wdeprecated-register -fno-unroll-loops")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${GABLES_FLAGS}")
 
