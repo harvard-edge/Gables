@@ -12,7 +12,7 @@ android {
     }
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.google.gables"
+        applicationId "edu.harvard.seas.edge.gables"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
