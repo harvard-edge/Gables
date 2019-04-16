@@ -31,6 +31,7 @@ android {
         python {
             pip {
                 install "numpy==1.14.2"
+                install "matplotlib==2.2.2"
             }
             staticProxy("gables.gables_processor")
         }

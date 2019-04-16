@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.system.ErrnoException;
+import android.system.Os;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,6 +66,12 @@ public class CPURoofline extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        try {
+            Os.setenv("OMP_PROC_BIND", "spread", true);
+            Os.setenv("OMP_PLACES", "threads", true);
+        } catch (ErrnoException e) {
+            e.printStackTrace();
+        }
     }
 
     void drawGraph(float[][] data) {
@@ -308,7 +316,7 @@ public class CPURoofline extends Fragment {
         chart = rootView.findViewById(R.id.graph);
         setupSliders(rootView);
         setupButton(rootView);
-        drawGraph(new GablesPython().processCPURoofline());
+//        drawGraph(new GablesPython().processCPURoofline());
         return rootView;
     }
 
@@ -456,7 +464,7 @@ public class CPURoofline extends Fragment {
             if (gProcessDialog.isShowing()) {
                 gProcessDialog.dismiss();
             }
-            drawGraph(new GablesPython().processCPURoofline());
+            new GablesPython().processCPURoofline();
         }
 
         void generatePlotData(List<CPUDataPoint> values) {

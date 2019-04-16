@@ -1,22 +1,26 @@
-from java import constructor, method, static_proxy, jint, jarray, jfloat
+from java import constructor, method, static_proxy, jint, jarray, jfloat, jvoid
 from java.lang import String
 from android.os import Environment
 import os
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 class GablesPython(static_proxy()):
     @constructor([])
     def __init__(self):
         pass
 
-    @method(jarray(jarray(jfloat)), [])
+    @method(jvoid, [])
     def processCPURoofline(self):
         try:
             os.chdir(os.path.join(str(Environment.getExternalStorageDirectory()), "CPURoofline/"))
         except:
             return None
-        return (jarray(jarray(jfloat)))(get_roofline_plot_lines(get_best_summary(get_test_summaries())))
+        summaries = get_test_summaries()
+        generate_roofline_plot(summaries)
+        generate_bandwidth_plot(get_best_summary(summaries))
+        print("Plotting complete")
 
 
 def smooth(y):
@@ -112,6 +116,8 @@ def get_test_summaries():
     summaries = []
     # Parse raw test data into list of test summaries
     for filename in os.listdir():
+        if filename.endswith(".png"):
+            continue
         summary = TestSummary()
         with open(os.path.join(os.getcwd(), filename), 'r') as file:
             prev_values = None
@@ -166,27 +172,48 @@ def get_best_summary(summaries):
             max_weight = summary.weight
     return summaries[max_index]
 
-def get_roofline_plot_lines(summary):
-    x = np.logspace(-1, 5, 1000)
+def generate_roofline_plot(summaries):
+    max_index = 0
+    max_weight = -math.inf
 
-    data = []
-    data.append([summary.max_gflops])
-    data.append(np.logspace(-1, 5, 1000))
+    max_gflops = -math.inf
+
+    for i, summary in enumerate(summaries):
+        max_gflops = max(max_gflops, summary.max_gflops)
+        if summary.weight > max_weight:
+            max_index = i
+            max_weight = summary.weight
+    summary = summaries[max_index]
+
+    x = np.logspace(-1, 5, 1000)
+    plt.yscale("log")
+    plt.xscale("log")
 
     if summary.max_dram:
-        data.append(np.minimum(summary.max_dram * x, np.repeat(summary.max_gflops, len(x))))
-    else:
-        data.append([0])
+        ys = np.minimum(summary.max_dram * x, np.repeat(summary.max_gflops, len(x)))
+        print(ys)
+        plt.plot(x, ys, label="DRAM {} GB/s".format(summary.max_dram))
 
     if summary.max_l1:
-        data.append(np.minimum(summary.max_l1 * x, np.repeat(summary.max_gflops, len(x))))
-    else:
-        data.append([0])
+        ys = np.minimum(summary.max_l1 * x, np.repeat(summary.max_gflops, len(x)))
+        plt.plot(x, ys, label="L1 {} GB/s".format(summary.max_l1))
 
     if summary.max_l2:
-        data.append(np.minimum(summary.max_l2 * x, np.repeat(summary.max_gflops, len(x))))
-    else:
-        data.append([0])
+        ys = np.minimum(summary.max_l2 * x, np.repeat(summary.max_gflops, len(x)))
+        plt.plot(x, ys, label="L2 {} GB/s".format(summary.max_l2))
 
-    return data
+    plt.legend()
+    plt.xlabel("Flops/byte")
+    plt.ylabel("MFlops/second")
+    plt.savefig('roofline.png')
+    plt.close()
+
+def generate_bandwidth_plot(summary):
+    plt.plot(summary.x, summary.band)
+    plt.xscale("log")
+    plt.yscale("log")
+    plt.ylabel("Total Bandwidth (GB/s)")
+    plt.xlabel("Working set size (bytes)")
+    plt.savefig("bandwidth.png")
+    plt.close()
 
