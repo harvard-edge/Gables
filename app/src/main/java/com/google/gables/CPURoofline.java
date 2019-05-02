@@ -4,6 +4,8 @@ package com.google.gables;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -36,6 +39,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -58,7 +62,7 @@ import static com.google.gables.Utils.log;
 
 public class CPURoofline extends Fragment {
     private static final String TAG = CPURoofline.class.getName();
-    private LineChart chart;
+    private ImageView chart;
     private ProgressDialog gProcessDialog;
     private String gResultsDir = "CPURoofline";
 
@@ -72,63 +76,9 @@ public class CPURoofline extends Fragment {
         } catch (ErrnoException e) {
             e.printStackTrace();
         }
-    }
-
-    void drawGraph(float[][] data) {
-        LineData lineData = new LineData();
-        float[] x = data[2];
-        for(int i = 2; i <= 4; i++) {
-            float[] ys = data[i];
-            List<Entry> entries = new ArrayList<Entry>();
-
-            for (int j = 0; j < ys.length; j++) {
-                entries.add(new Entry(scaleCbr(x[j]), scaleCbr(ys[j])));
-            }
-            LineDataSet dataSet = null;
-            switch (i) {
-                case 2:
-                    // DRAM
-                    dataSet = new LineDataSet(entries, "DRAM");
-                    dataSet.setColor(Color.RED);
-                    break;
-
-                case 3:
-                    // L1
-                    dataSet = new LineDataSet(entries, "L1");
-                    dataSet.setColor(Color.GREEN);
-                    break;
-
-                case 4:
-                    // L2
-                    dataSet = new LineDataSet(entries, "L2");
-                    dataSet.setColor(Color.BLUE);
-                    break;
-            }
-            dataSet.setDrawCircles(false);
-            lineData.addDataSet(dataSet);
-        }
-        Log.d("GRAPH", "Drawing graph");
-        chart.getAxisRight().setEnabled(false);
-        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-//        chart.getAxisLeft().setValueFormatter(new IAxisValueFormatter() {
-//            @Override
-//            public String getFormattedValue(float value, AxisBase axis) {
-//                DecimalFormat mFormat;
-//                mFormat = new DecimalFormat("##.###");
-//                return "10^" + mFormat.format(unScaleCbr(value));
-//            }
-//        });
-//        chart.getXAxis().setValueFormatter(new ValueFormatter() {
-//            @Override
-//            public String getFormattedValue(float value, AxisBase axis) {
-//                DecimalFormat mFormat;
-//                mFormat = new DecimalFormat("##.###");
-//                return "10^" + mFormat.format(unScaleCbr(value));
-//            }
-//        });
-        chart.setDescription(new Description());
-        chart.setData(lineData);
-        chart.invalidate();
+        Log.e("shell", "hi");
+        Log.e("shell", shellRoofline());
+        Log.e("shell", "bye");
     }
 
     private float scaleCbr(double cbr) {
@@ -174,6 +124,35 @@ public class CPURoofline extends Fragment {
                 }
             }
         });
+    }
+
+    public void displayGraph() {
+        File file = new File("/sdcard/CPURoofline/bandwidth.png");
+        if (file.exists()) {
+            Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            chart.setImageBitmap(myBitmap);
+        }
+    }
+
+    public String shellRoofline() {
+        StringBuffer output = new StringBuffer();
+
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec("su -C ./data/local/tmp/stream");
+            p.waitFor();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String line = "";
+            while ((line = reader.readLine())!= null) {
+                output.append(line + "n");
+            }
+
+        } catch (Exception e) {
+            Log.e("Oh no", e.getMessage());
+        }
+        String response = output.toString();
+        return response;
     }
 
     public void RooflineCmdline() {
@@ -465,6 +444,7 @@ public class CPURoofline extends Fragment {
                 gProcessDialog.dismiss();
             }
             new GablesPython().processCPURoofline();
+            displayGraph();
         }
 
         void generatePlotData(List<CPUDataPoint> values) {

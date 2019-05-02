@@ -120,16 +120,16 @@ public class MainActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
+//                case 0:
+//                    DSPRoofline dspRoofline = new DSPRoofline();
+//                    return dspRoofline;
+//                case 1:
+//                    SOCRoofline socRoofline = new SOCRoofline();
+//                    return socRoofline;
+//                case 2:
+//                    GPURoofline gpuRoofline = new GPURoofline();
+//                    return gpuRoofline;
                 case 0:
-                    DSPRoofline dspRoofline = new DSPRoofline();
-                    return dspRoofline;
-                case 1:
-                    SOCRoofline socRoofline = new SOCRoofline();
-                    return socRoofline;
-                case 2:
-                    GPURoofline gpuRoofline = new GPURoofline();
-                    return gpuRoofline;
-                case 3:
                     CPURoofline cpuRoofline = new CPURoofline();
                     return cpuRoofline;
                 default:
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 1;
         }
     }
 }
