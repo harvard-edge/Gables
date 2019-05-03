@@ -5,6 +5,7 @@ import os
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+import matplotlib
 
 class GablesPython(static_proxy()):
     @constructor([])
@@ -210,8 +211,8 @@ def generate_roofline_plot(summaries):
 
 def generate_bandwidth_plot(summary):
     plt.plot(summary.x, summary.band)
-    plt.xscale("log")
-    plt.yscale("log")
+    plt.xscale("log", basex=2)
+    plt.yscale("log", basey=10)
     plt.ylabel("Total Bandwidth (GB/s)")
     plt.xlabel("Working set size (bytes)")
     plt.savefig("bandwidth.png")
