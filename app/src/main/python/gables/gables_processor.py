@@ -6,6 +6,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import matplotlib
+import statistics
 
 class GablesPython(static_proxy()):
     @constructor([])
@@ -36,6 +37,19 @@ def smooth(y):
 
     return ys
 
+def grouper(iterable):
+    prev = None
+    group = []
+    for item in iterable:
+        if not prev or item - prev <= 2:
+            group.append(item)
+        else:
+            yield group
+            group = [item]
+        prev = item
+    if group:
+        yield group
+
 def calculate_bandwidths(summary):
     max_band = max(summary.band)
     num_buckets = 10000
@@ -53,31 +67,30 @@ def calculate_bandwidths(summary):
                 buckets[i] += 1
                 bucket_values[i] = b
 
-    band_list = [[max_band*1000,1000]]
+    band_list = [max_band]
     maxc = -1
     maxi = -1
-    for i in range(num_buckets-3,1,-1):
-        if buckets[i] > 6:
-            if buckets[i] > maxc:
-                maxc = buckets[i]
-                maxi = i
-        else:
-            threshold = 1.25
-            if maxc > 1:
-                value = float(bucket_values[maxi])/max(1,buckets[maxi])
-                if threshold*value < float(band_list[-1][0])/band_list[-1][1]:
-                    band_list.append([bucket_values[maxi],buckets[maxi]])
-                else:
-                    band_list[-1][0] += bucket_values[maxi]
-                    band_list[-1][1] += buckets[maxi]
-            maxc = -1
-            maxi = -1
 
-    print(band_list)
-    summary.max_dram = band_list[-1][0]
+    # Find all buckets with a large number of values
+    for i in range(num_buckets-3,1,-1):
+        if buckets[i] > 20:
+            band_list.append(bucket_values[i])
+
+    # Do some simple clustering
+    THRESHOLD = 0.25
+    prev = None
+    final_band_list = []
+
+    print("GROUPER BAND_LIST")
+    grouped_dict = dict(enumerate(grouper(reversed(band_list)), 1))
+    for key in grouped_dict.keys():
+        final_band_list.append(statistics.mean(grouped_dict[key]))
+    print(final_band_list)
+
     try:
-        summary.max_l2 = band_list[-2][0]
-        summary.max_l1 = band_list[-3][0]
+        summary.max_dram = final_band_list[0]
+        summary.max_l1 = final_band_list[1]
+        summary.max_l2 = final_band_list[2]
     except:
         pass
 
@@ -192,7 +205,7 @@ def generate_roofline_plot(summaries):
 
     if summary.max_dram:
         ys = np.minimum(summary.max_dram * x, np.repeat(summary.max_gflops, len(x)))
-        print(ys)
+        # print(ys)
         plt.plot(x, ys, label="DRAM {} GB/s".format(summary.max_dram))
 
     if summary.max_l1:
