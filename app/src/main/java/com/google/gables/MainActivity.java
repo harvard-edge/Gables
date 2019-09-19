@@ -51,15 +51,6 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Hello World!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXST);
         askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXST);
     }
@@ -120,16 +111,16 @@ public class MainActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
+//                case 0:
+//                    DSPRoofline dspRoofline = new DSPRoofline();
+//                    return dspRoofline;
+//                case 1:
+//                    SOCRoofline socRoofline = new SOCRoofline();
+//                    return socRoofline;
+//                case 2:
+//                    GPURoofline gpuRoofline = new GPURoofline();
+//                    return gpuRoofline;
                 case 0:
-                    DSPRoofline dspRoofline = new DSPRoofline();
-                    return dspRoofline;
-                case 1:
-                    SOCRoofline socRoofline = new SOCRoofline();
-                    return socRoofline;
-                case 2:
-                    GPURoofline gpuRoofline = new GPURoofline();
-                    return gpuRoofline;
-                case 3:
                     CPURoofline cpuRoofline = new CPURoofline();
                     return cpuRoofline;
                 default:
@@ -141,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "DSP Roofline";
+                    return "CPU Roofline";
                 case 1:
                     return "SOC Roofline";
                 case 2:
@@ -154,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 1;
         }
     }
 }

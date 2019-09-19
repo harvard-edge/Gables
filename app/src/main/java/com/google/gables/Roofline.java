@@ -12,7 +12,7 @@ public class Roofline {
     static {
         String filename;
 
-        filename = "roofline-lib";
+        filename = "roofline";
         try {
             System.loadLibrary(filename);
             Log.i(TAG, filename + " successfully loaded!");
@@ -22,15 +22,15 @@ public class Roofline {
             android.os.Process.killProcess(android.os.Process.myPid());
         }
 
-        filename = "gables";
-        try {
-            System.loadLibrary(filename);
-            Log.i(TAG, filename + " successfully loaded!");
-        } catch (UnsatisfiedLinkError e) {
-            Log.e(TAG, filename + " NOT successfully loaded: " + e);
-            Log.e(TAG, "Terminating application because library not found.");
-            android.os.Process.killProcess(android.os.Process.myPid());
-        }
+//        filename = "gables";
+//        try {
+//            System.loadLibrary(filename);
+//            Log.i(TAG, filename + " successfully loaded!");
+//        } catch (UnsatisfiedLinkError e) {
+//            Log.e(TAG, filename + " NOT successfully loaded: " + e);
+//            Log.e(TAG, "Terminating application because library not found.");
+//            android.os.Process.killProcess(android.os.Process.myPid());
+//        }
     }
 
     /* ================================================================================= */

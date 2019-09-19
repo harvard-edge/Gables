@@ -4,31 +4,57 @@ package com.google.gables;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.system.ErrnoException;
+import android.system.Os;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageListener;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import gables.gables_processor.GablesPython;
 
 import static com.google.gables.Roofline.CPU_Execute;
 import static com.google.gables.Utils.ExtStoragePermissions_t.EXT_STORAGE_RW;
@@ -40,50 +66,34 @@ import static com.google.gables.Utils.log;
 
 public class CPURoofline extends Fragment {
     private static final String TAG = CPURoofline.class.getName();
-
+    private ImageView chart;
     private ProgressDialog gProcessDialog;
     private String gResultsDir = "CPURoofline";
+    private CarouselView slider;
+    private TextView slidePrompt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
+        try {
+            Os.setenv("OMP_PROC_BIND", "spread", true);
+            Os.setenv("OMP_PLACES", "threads", true);
+        } catch (ErrnoException e) {
+            e.printStackTrace();
+        }
+        Log.e("shell", "hi");
+        Log.e("shell", shellRoofline());
+        Log.e("shell", "bye");
     }
 
-    void drawGraph(View rootView) {
-        // Setup a graph view
-        GraphView graphview = rootView.findViewById(R.id.graph);
+    private float scaleCbr(double cbr) {
+        return (float)(Math.log10(cbr));
+    }
 
-        // activate horizontal zooming and scrolling
-        graphview.getViewport().setScalable(false);
-        graphview.getViewport().setScrollable(true);
-        graphview.getViewport().setScalableY(false);
-        graphview.getViewport().setScrollableY(true);
-
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 0),
-                new DataPoint(1, 7.5),
-                new DataPoint(2, 7.5),
-                new DataPoint(4, 7.5),
-                new DataPoint(8, 7.5),
-                new DataPoint(16, 7.5)
-        });
-
-        GridLabelRenderer gridLabel = graphview.getGridLabelRenderer();
-        gridLabel.setHorizontalAxisTitle("Operational Intensity (FLOPS/byte)");
-        gridLabel.setVerticalAxisTitle("Performance (GFLOPS)");
-
-        graphview.setTitle("CPU Roofline");
-
-        series.setTitle("CPU Roofline");
-        series.setBackgroundColor(Color.GRAY);
-        series.setColor(Color.BLACK);
-        series.setDrawDataPoints(false);
-        series.setDataPointsRadius(10);
-        series.setThickness(7);
-
-        graphview.addSeries(series);
+    private float unScaleCbr(double cbr) {
+        double calcVal = Math.pow(10, cbr);
+        return (float)(calcVal);
     }
 
     /**
@@ -111,8 +121,8 @@ public class CPURoofline extends Fragment {
                     final int nThreads = seekBar_cpu.getProgress() + 1; // remember that seekbar starts at 0
                     final int nFlops = (1 << seekBar_opi.getProgress()); // remember that seekbar starts at 0
 
-                    final Switch neonSwitch = rootView.findViewById(R.id.switch_neonMode);
-                    final boolean neonMode = neonSwitch.isChecked();
+//                    final Switch neonSwitch = rootView.findViewById(R.id.switch_neonMode);
+                    final boolean neonMode = false;
 
                     CPURoofline(nThreads, maxMemory, nFlops, neonMode);
 
@@ -120,6 +130,35 @@ public class CPURoofline extends Fragment {
                 }
             }
         });
+    }
+
+    public void displayGraph(String filename, ImageView view) {
+        File file = new File(filename);
+        if (file.exists()) {
+            Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            view.setImageBitmap(myBitmap);
+        }
+    }
+
+    public String shellRoofline() {
+        StringBuffer output = new StringBuffer();
+
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec("su -C ./data/local/tmp/stream");
+            p.waitFor();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String line = "";
+            while ((line = reader.readLine())!= null) {
+                output.append(line + "n");
+            }
+
+        } catch (Exception e) {
+            Log.e("Oh no", e.getMessage());
+        }
+        String response = output.toString();
+        return response;
     }
 
     public void RooflineCmdline() {
@@ -231,39 +270,39 @@ public class CPURoofline extends Fragment {
         });
     }
 
-    private void setupSwitch(final View rootView) {
-        final Switch neonSwitch = rootView.findViewById(R.id.switch_neonMode);
-        final boolean neonMode = neonSwitch.isChecked();
-
-        neonSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                TextView textView = rootView.findViewById(R.id.txtBox_neonSwitch);
-                if (isChecked) {
-                    textView.setText("NEON Vectorization (Enabled)");
-                } else {
-                    //fixme: check to see how we can disable this for hardcore real.
-                    textView.setText("NEON Vectorization (Disabled)");
-                }
-            }
-        });
-    }
+//    private void setupSwitch(final View rootView) {
+//        final Switch neonSwitch = rootView.findViewById(R.id.switch_neonMode);
+//        final boolean neonMode = neonSwitch.isChecked();
+//
+//        neonSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                TextView textView = rootView.findViewById(R.id.txtBox_neonSwitch);
+//                if (isChecked) {
+//                    textView.setText("NEON Vectorization (Enabled)");
+//                } else {
+//                    //fixme: check to see how we can disable this for hardcore real.
+//                    textView.setText("NEON Vectorization (Disabled)");
+//                }
+//            }
+//        });
+//    }
 
     private void setupSliders(View rootView) {
         setupMemorySlider(rootView);
         setupCPUSlider(rootView);
         setupOpIntensity(rootView);
-        setupSwitch(rootView);
+//        setupSwitch(rootView);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_cpu_roofline, container, false);
-
-        drawGraph(rootView);
+        chart = rootView.findViewById(R.id.graph);
         setupSliders(rootView);
         setupButton(rootView);
-
+        slider = rootView.findViewById(R.id.carouselView);
+        slidePrompt = rootView.findViewById(R.id.swipe_prompt);
         return rootView;
     }
 
@@ -359,9 +398,12 @@ public class CPURoofline extends Fragment {
                     String strCurrProgress = String.valueOf(Math.round(100.0 * progressCounter / progressTotal));
                     String message = "Running " + i + " FLOPS/byte with " + j + " threads.";
                     publishProgress(strCurrProgress, message);
+                    publishProgress(strCurrProgress, message);
                     Log.i(TAG, "Starting " + i + " FLOPS/byte with " + j + " threads.");
 
                     String output = CPU_Execute(mem, j, i, neon);
+
+                    generatePlotData(processRawData(output));
 
                     if (isCancelled()) {
                         message = "Cancelling...";
@@ -408,6 +450,114 @@ public class CPURoofline extends Fragment {
             if (gProcessDialog.isShowing()) {
                 gProcessDialog.dismiss();
             }
+            new GablesPython().processCPURoofline();
+            setupSlider();
+        }
+
+        private void setupSlider() {
+            ImageListener imageListener = new ImageListener() {
+                @Override
+                public void setImageForPosition(int position, ImageView imageView) {
+                    String filename = "";
+                    switch (position) {
+                        case 0:
+                        default:
+                            filename = "/sdcard/CPURoofline/roofline.png";
+                            break;
+                        case 1:
+                            filename = "/sdcard/CPURoofline/bandwidth.png";
+                            break;
+                    }
+                    displayGraph(filename, imageView);
+                }
+            };
+            slider.setImageListener(imageListener);
+            slider.setPageCount(2);
+            slidePrompt.setVisibility(View.VISIBLE);
+
+        }
+        void generatePlotData(List<CPUDataPoint> values) {
+            List<Double> gflops = new ArrayList<>();
+            List<Double> flopsPerByte = new ArrayList<>();
+            for (CPUDataPoint value : values) {
+                gflops.add(value.getTotalFlops()/value.getTotalSeconds());
+                flopsPerByte.add(value.getTotalFlops() / value.getTotalBytes());
+            }
+            System.out.println(gflops.toString());
+            System.out.println(flopsPerByte.toString());
+        }
+
+        List<CPUDataPoint> processRawData(String data) {
+            List<String> rows = Arrays.asList(data.trim().split("\\s*\\n\\s*"));
+            List<CPUDataPoint> points = new ArrayList<>();
+            for (String row : rows) {
+                if (row.contains("META_DATA")) {
+                    break;
+                } else {
+                    points.add(CPUDataPoint.parseCPUDataPoint(row));
+                }
+            }
+            return points;
+        }
+    }
+
+    static class CPUDataPoint {
+
+        double distinctBytes;
+        double nTrials;
+        double totalSeconds;
+        double totalBytes;
+        double totalFlops;
+
+        public static CPUDataPoint parseCPUDataPoint(String input) {
+            String[] values = input.split("\\s+");
+            CPUDataPoint point = new CPUDataPoint();
+            point.setDistinctBytes(Double.valueOf(values[0]));
+            point.setnTrials(Double.valueOf(values[1]));
+            point.setTotalSeconds(Double.valueOf(values[2]));
+            point.setTotalBytes(Double.valueOf(values[3]));
+            point.setTotalFlops(Double.valueOf(values[4]));
+            return point;
+        }
+
+        public double getDistinctBytes() {
+            return distinctBytes;
+        }
+
+        public void setDistinctBytes(double distinctBytes) {
+            this.distinctBytes = distinctBytes;
+        }
+
+        public double getnTrials() {
+            return nTrials;
+        }
+
+        public void setnTrials(double nTrials) {
+            this.nTrials = nTrials;
+        }
+
+        public double getTotalSeconds() {
+            return totalSeconds;
+        }
+
+        public void setTotalSeconds(double totalSeconds) {
+            this.totalSeconds = totalSeconds;
+        }
+
+        public double getTotalBytes() {
+            return totalBytes;
+        }
+
+        public void setTotalBytes(double totalBytes) {
+            this.totalBytes = totalBytes;
+        }
+
+        public double getTotalFlops() {
+            return totalFlops;
+        }
+
+        public void setTotalFlops(double totalFlops) {
+            this.totalFlops = totalFlops;
         }
     }
 }
