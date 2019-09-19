@@ -37,6 +37,10 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageListener;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -65,6 +69,8 @@ public class CPURoofline extends Fragment {
     private ImageView chart;
     private ProgressDialog gProcessDialog;
     private String gResultsDir = "CPURoofline";
+    private CarouselView slider;
+    private TextView slidePrompt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,8 +121,8 @@ public class CPURoofline extends Fragment {
                     final int nThreads = seekBar_cpu.getProgress() + 1; // remember that seekbar starts at 0
                     final int nFlops = (1 << seekBar_opi.getProgress()); // remember that seekbar starts at 0
 
-                    final Switch neonSwitch = rootView.findViewById(R.id.switch_neonMode);
-                    final boolean neonMode = neonSwitch.isChecked();
+//                    final Switch neonSwitch = rootView.findViewById(R.id.switch_neonMode);
+                    final boolean neonMode = false;
 
                     CPURoofline(nThreads, maxMemory, nFlops, neonMode);
 
@@ -126,11 +132,11 @@ public class CPURoofline extends Fragment {
         });
     }
 
-    public void displayGraph() {
-        File file = new File("/sdcard/CPURoofline/bandwidth.png");
+    public void displayGraph(String filename, ImageView view) {
+        File file = new File(filename);
         if (file.exists()) {
             Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-            chart.setImageBitmap(myBitmap);
+            view.setImageBitmap(myBitmap);
         }
     }
 
@@ -264,28 +270,28 @@ public class CPURoofline extends Fragment {
         });
     }
 
-    private void setupSwitch(final View rootView) {
-        final Switch neonSwitch = rootView.findViewById(R.id.switch_neonMode);
-        final boolean neonMode = neonSwitch.isChecked();
-
-        neonSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                TextView textView = rootView.findViewById(R.id.txtBox_neonSwitch);
-                if (isChecked) {
-                    textView.setText("NEON Vectorization (Enabled)");
-                } else {
-                    //fixme: check to see how we can disable this for hardcore real.
-                    textView.setText("NEON Vectorization (Disabled)");
-                }
-            }
-        });
-    }
+//    private void setupSwitch(final View rootView) {
+//        final Switch neonSwitch = rootView.findViewById(R.id.switch_neonMode);
+//        final boolean neonMode = neonSwitch.isChecked();
+//
+//        neonSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                TextView textView = rootView.findViewById(R.id.txtBox_neonSwitch);
+//                if (isChecked) {
+//                    textView.setText("NEON Vectorization (Enabled)");
+//                } else {
+//                    //fixme: check to see how we can disable this for hardcore real.
+//                    textView.setText("NEON Vectorization (Disabled)");
+//                }
+//            }
+//        });
+//    }
 
     private void setupSliders(View rootView) {
         setupMemorySlider(rootView);
         setupCPUSlider(rootView);
         setupOpIntensity(rootView);
-        setupSwitch(rootView);
+//        setupSwitch(rootView);
     }
 
     @Override
@@ -295,7 +301,8 @@ public class CPURoofline extends Fragment {
         chart = rootView.findViewById(R.id.graph);
         setupSliders(rootView);
         setupButton(rootView);
-//        drawGraph(new GablesPython().processCPURoofline());
+        slider = rootView.findViewById(R.id.carouselView);
+        slidePrompt = rootView.findViewById(R.id.swipe_prompt);
         return rootView;
     }
 
@@ -444,9 +451,31 @@ public class CPURoofline extends Fragment {
                 gProcessDialog.dismiss();
             }
             new GablesPython().processCPURoofline();
-            displayGraph();
+            setupSlider();
         }
 
+        private void setupSlider() {
+            ImageListener imageListener = new ImageListener() {
+                @Override
+                public void setImageForPosition(int position, ImageView imageView) {
+                    String filename = "";
+                    switch (position) {
+                        case 0:
+                        default:
+                            filename = "/sdcard/CPURoofline/roofline.png";
+                            break;
+                        case 1:
+                            filename = "/sdcard/CPURoofline/bandwidth.png";
+                            break;
+                    }
+                    displayGraph(filename, imageView);
+                }
+            };
+            slider.setImageListener(imageListener);
+            slider.setPageCount(2);
+            slidePrompt.setVisibility(View.VISIBLE);
+
+        }
         void generatePlotData(List<CPUDataPoint> values) {
             List<Double> gflops = new ArrayList<>();
             List<Double> flopsPerByte = new ArrayList<>();

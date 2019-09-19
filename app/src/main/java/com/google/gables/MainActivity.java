@@ -51,15 +51,6 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Hello World!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXST);
         askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXST);
     }

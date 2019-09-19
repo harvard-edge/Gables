@@ -1,133 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity$PlaceholderFragment">
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <com.synnapps.carouselview.CarouselView
+        android:id="@+id/carouselView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:fillColor="#FFFFFFFF"
+        app:pageColor="#00000000"
+        app:radius="6dp"
+        app:slideInterval="3000"
+        app:strokeColor="#FF777777"
+        app:strokeWidth="1dp"
+        app:autoPlay="false"
+        app:indicatorMarginVertical="-20dp"/>
+
+    <TextView
+        android:id="@+id/swipe_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:text="Swipe to see more graphs"
+        android:visibility="gone"/>
 
     <SeekBar
         android:id="@+id/seekBar_opIntensity"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="140dp"
         android:layout_height="24dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
         android:max="@integer/maxCPUOpIntensityLog2"
-        android:progress="@integer/maxCPUOpIntensityLog2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/txtBox_maxThreads"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_threadMem" />
+        android:progress="@integer/maxCPUOpIntensityLog2" />
 
     <TextView
         android:id="@+id/txtBox_opIntensity"
-        android:layout_width="0dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:gravity="left|center"
-        android:text="Ops (FLOPS/byte)"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtBox_threadMem" />
-
-    <TextView
-        android:id="@+id/txtBox_maxThreads"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:gravity="left|center"
-        android:text="Number Threads (Cores)"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtBox_neonSwitch" />
-
-    <TextView
-        android:id="@+id/txtBox_threadMem"
-        android:layout_width="0dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:gravity="left|center"
-        android:text="Memory Alloc. (MB)"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtBox_maxThreads" />
-
-    <ImageView
-        android:id="@+id/graph"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:focusable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="top" />
+        android:text="Ops (FLOPS/byte)"/>
 
     <SeekBar
         android:id="@+id/seekBar_maxThreads"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="140dp"
         android:layout_height="24dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
         android:max="16"
-        android:progress="0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/txtBox_maxThreads"
-        app:layout_constraintTop_toBottomOf="@+id/switch_neonMode" />
+        android:progress="0" />
 
-    <ToggleButton
-        android:id="@+id/toggle_runRoofline"
+    <TextView
+        android:id="@+id/txtBox_maxThreads"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/tab1_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_height="24dp"
+        android:text="Number Threads (Cores)"/>
 
     <SeekBar
         android:id="@+id/seekBar_threadMem"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="140dp"
         android:layout_height="24dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="16dp"
         android:max="@integer/maxCPUMemoryLog2"
-        android:progress="@integer/maxCPUMemoryLog2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_maxThreads" />
-
-    <Switch
-        android:id="@+id/switch_neonMode"
-        android:layout_width="52dp"
-        android:layout_height="27dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="36dp"
-        android:checked="false"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar_maxThreads"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtBox_neonSwitch"
-        app:layout_constraintVertical_bias="0.0"
-        tools:checked="false" />
+        android:progress="@integer/maxCPUMemoryLog2" />
 
     <TextView
-        android:id="@+id/txtBox_neonSwitch"
-        android:layout_width="240dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:text="NEON Vectorization (Enabled)"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graph" />
+        android:id="@+id/txtBox_threadMem"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:text="Memory Alloc. (MB)" />
 
-</android.support.constraint.ConstraintLayout>
+    <ToggleButton
+        android:id="@+id/toggle_runRoofline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tab1_button" />
+
+</LinearLayout>

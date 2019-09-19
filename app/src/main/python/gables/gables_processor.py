@@ -171,6 +171,7 @@ def get_test_summaries():
         # Calculate weight
         calculate_weight(summary)
         summaries.append(summary)
+        print("SUM MAX GFLOPS = {}".format(summary.max_gflops))
     return summaries
 
 def get_best_summary(summaries):
@@ -215,7 +216,7 @@ def generate_roofline_plot(summaries):
     if summary.max_l2:
         ys = np.minimum(summary.max_l2 * x, np.repeat(summary.max_gflops, len(x)))
         plt.plot(x, ys, label="L2 {} GB/s".format(summary.max_l2))
-
+    print("MAX GFLOPS = {}".format(summary.max_gflops))
     plt.legend()
     plt.xlabel("Flops/byte")
     plt.ylabel("MFlops/second")
