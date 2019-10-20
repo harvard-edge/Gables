@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.opengl.GLES31;
 import android.os.AsyncTask;
@@ -16,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -24,9 +27,13 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ImageListener;
 
 import java.io.File;
 import java.nio.IntBuffer;
+
+import gables.gables_processor.GablesPython;
 
 import static android.opengl.GLES31.GL_MAX_COMPUTE_WORK_GROUP_COUNT;
 import static android.opengl.GLES31.GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS;
@@ -48,45 +55,46 @@ public class GPURoofline extends Fragment {
 
     private ProgressDialog gProcessDialog;
     private String gResultsDir = "GPURoofline";
-
+    private CarouselView slider;
+    private View slidePrompt;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    void drawGraph(View rootView) {
-        // Setup a graph view
-        GraphView graphview = rootView.findViewById(R.id.graph);
-
-        // activate horizontal zooming and scrolling
-        graphview.getViewport().setScalable(false);
-        graphview.getViewport().setScrollable(true);
-        graphview.getViewport().setScalableY(false);
-        graphview.getViewport().setScrollableY(true);
-
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 1),
-                new DataPoint(1, 2),
-                new DataPoint(2, 3)
-        });
-
-        GridLabelRenderer gridLabel = graphview.getGridLabelRenderer();
-        gridLabel.setHorizontalAxisTitle("Operational Intensity (FLOPS/byte)");
-        gridLabel.setVerticalAxisTitle("Performance (GFLOPS)");
-
-        graphview.setTitle("GPU Roofline");
-
-        series.setTitle("GPU Roofline");
-        series.setBackgroundColor(Color.GRAY);
-        series.setColor(Color.BLACK);
-        series.setDrawDataPoints(false);
-        series.setDataPointsRadius(10);
-        series.setThickness(7);
-
-        graphview.addSeries(series);
-
-        Log.d(TAG, "Finished drawing graphview for GPU Roofline");
-    }
+//    void drawGraph(View rootView) {
+//        // Setup a graph view
+//        GraphView graphview = rootView.findViewById(R.id.graph);
+//
+//        // activate horizontal zooming and scrolling
+//        graphview.getViewport().setScalable(false);
+//        graphview.getViewport().setScrollable(true);
+//        graphview.getViewport().setScalableY(false);
+//        graphview.getViewport().setScrollableY(true);
+//
+//        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
+//                new DataPoint(0, 1),
+//                new DataPoint(1, 2),
+//                new DataPoint(2, 3)
+//        });
+//
+//        GridLabelRenderer gridLabel = graphview.getGridLabelRenderer();
+//        gridLabel.setHorizontalAxisTitle("Operational Intensity (FLOPS/byte)");
+//        gridLabel.setVerticalAxisTitle("Performance (GFLOPS)");
+//
+//        graphview.setTitle("GPU Roofline");
+//
+//        series.setTitle("GPU Roofline");
+//        series.setBackgroundColor(Color.GRAY);
+//        series.setColor(Color.BLACK);
+//        series.setDrawDataPoints(false);
+//        series.setDataPointsRadius(10);
+//        series.setThickness(7);
+//
+//        graphview.addSeries(series);
+//
+//        Log.d(TAG, "Finished drawing graphview for GPU Roofline");
+//    }
 
     void printOpenGLInfo() { //fixme, if this works i can get rid of the GPU JNI calls.
         IntBuffer work_grp_info = IntBuffer.allocate(3);
@@ -289,7 +297,7 @@ public class GPURoofline extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_gpu_roofline, container, false);
 
-        drawGraph(rootView);
+//        drawGraph(rootView);
 
         setupMaxWorkGroupCountSlider(rootView);
         setupMaxWorkGroupSizeSlider(rootView);
@@ -298,9 +306,40 @@ public class GPURoofline extends Fragment {
 
         setupButton(rootView);
 
+        slider = rootView.findViewById(R.id.carouselView);
+        slidePrompt = rootView.findViewById(R.id.swipe_prompt);
         return rootView;
     }
 
+    private void setupSlider() {
+        ImageListener imageListener = new ImageListener() {
+            @Override
+            public void setImageForPosition(int position, ImageView imageView) {
+                String filename = "";
+                switch (position) {
+                    case 0:
+                    default:
+                        filename = "/sdcard/GPURoofline/roofline.png";
+                        break;
+                    case 1:
+                        filename = "/sdcard/GPURoofline/bandwidth.png";
+                        break;
+                }
+                displayGraph(filename, imageView);
+            }
+        };
+        slider.setImageListener(imageListener);
+        slider.setPageCount(2);
+        slidePrompt.setVisibility(View.VISIBLE);
+    }
+
+    public void displayGraph(String filename, ImageView view) {
+        File file = new File(filename);
+        if (file.exists()) {
+            Bitmap myBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            view.setImageBitmap(myBitmap);
+        }
+    }
     class GPURooflineAsyncTask extends AsyncTask<Void, String, String> {
         final int threads, groups, flops, mem;
         AssetManager mgr;
@@ -355,47 +394,32 @@ public class GPURoofline extends Fragment {
                     * (log(threads, 2) + 1)
                     * (log(groups, 2) + 1);
 
+            int g = groups;
+            int f = flops;
+            int t = threads;
             GPU_Initialize();
-            stop:
-            // label to break out of inner loop if "cancel" was hit on progress bar.
-            for (int f = 1; f <= flops; f = f * 2) { //fixme
-                for (int g = groups; g <= groups; g = g * 2) { // fixme: g goes to 65535
-                    if (g == 65536) { // fixme: make this more generic.
-                        g--;
-                    }
-                    for (int t = threads; t <= threads; t = t * 2) {
-
-                        String strCurrProgress = String.valueOf(Math.round(100.0 * progressCounter / progressTotal));
-                        String message = "Running " + f + " FLOPS/byte with " + "<" + g + ", " + t + ">.";
-                        publishProgress(strCurrProgress, message);
-                        Log.i(TAG, message);
-
-                        String output = GPU_Execute(mgr, g, t, f, mem);
-                        Log.d(TAG, "Finished " + message);
-
-                        if (isCancelled()) {
-                            message = "Cancelling...";
-                            publishProgress(strCurrProgress, message);
-                            Log.i(TAG, "Terminating out of the loop.");
-
-                            break stop;
-                        }
-
-                        if (isStorageAvailable(EXT_STORAGE_RW)) {
-                            message = "Writing results to storage.";
-                            publishProgress(strCurrProgress, message);
-
-                            String ofilename = "groups-" + g + "_threads-" + t + "_flops-" + f + ".gables";
-                            writeToSDFile(odir, ofilename, output);
-                        } else {
-                            Log.e(TAG, "Storage is not available for RW or is unavailable.");
-                        }
-
-                        // we've made progress so update
-                        progressCounter++;
-                    }
-                }
+            if (g == 65536) { // fixme: make this more generic.
+                g--;
             }
+            String strCurrProgress = String.valueOf(Math.round(100.0 * progressCounter / progressTotal));
+            String message = "Running " + f + " FLOPS/byte with " + "<" + g + ", " + t + ">.";
+            publishProgress(strCurrProgress, message);
+            Log.i(TAG, message);
+
+            String output = GPU_Execute(mgr, g, t, f, mem);
+            Log.d(TAG, "Finished " + message);
+
+            if (isStorageAvailable(EXT_STORAGE_RW)) {
+                message = "Writing results to storage.";
+                publishProgress(strCurrProgress, message);
+
+                String ofilename = "groups-" + g + "_threads-" + t + "_flops-" + f + ".gables";
+                writeToSDFile(odir, ofilename, output);
+            } else {
+                Log.e(TAG, "Storage is not available for RW or is unavailable.");
+            }
+//            // we've made progress so update
+//            progressCounter++;
             GPU_Finish();
             Log.i(TAG, "Finished doing all the sweeps.");
 
@@ -421,6 +445,8 @@ public class GPURoofline extends Fragment {
             if (gProcessDialog.isShowing()) {
                 gProcessDialog.dismiss();
             }
+            new GablesPython().processGPURoofline();
+            setupSlider();
         }
     }
 }

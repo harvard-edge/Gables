@@ -474,7 +474,6 @@ public class CPURoofline extends Fragment {
             slider.setImageListener(imageListener);
             slider.setPageCount(2);
             slidePrompt.setVisibility(View.VISIBLE);
-
         }
         void generatePlotData(List<CPUDataPoint> values) {
             List<Double> gflops = new ArrayList<>();

@@ -24,6 +24,17 @@ class GablesPython(static_proxy()):
         generate_bandwidth_plot(get_best_summary(summaries))
         print("Plotting complete")
 
+    @method(jvoid, [])
+    def processGPURoofline(self):
+        try:
+            os.chdir(os.path.join(str(Environment.getExternalStorageDirectory()), "GPURoofline/"))
+        except:
+            return None
+        summaries = get_test_summaries()
+        generate_roofline_plot(summaries)
+        generate_bandwidth_plot(get_best_summary(summaries))
+        print("Plotting complete")
+
 
 def smooth(y):
     ys = y[:]
