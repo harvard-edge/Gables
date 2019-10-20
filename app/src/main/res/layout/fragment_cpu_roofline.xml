@@ -6,12 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:background="#ffffff">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_margin="20dp"
+        android:id="@+id/edge_logo"
+        android:src="@drawable/harvard_edge"/>
 
     <com.synnapps.carouselview.CarouselView
         android:id="@+id/carouselView"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:visibility="gone"
         app:fillColor="#FFFFFFFF"
         app:pageColor="#00000000"
         app:radius="6dp"
@@ -25,55 +34,52 @@
         android:id="@+id/swipe_prompt"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
+        android:layout_marginTop="10dp"
         android:text="Swipe to see more graphs"
         android:visibility="gone"/>
 
+    <TextView
+        android:id="@+id/txtBox_opIntensity"
+        style="@style/SeekBarLabel"
+        android:text="Ops (FLOPS/byte)"/>
+
+
     <SeekBar
         android:id="@+id/seekBar_opIntensity"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="140dp"
-        android:layout_height="24dp"
+        style="@style/SeekBarStyle"
         android:max="@integer/maxCPUOpIntensityLog2"
         android:progress="@integer/maxCPUOpIntensityLog2" />
 
     <TextView
-        android:id="@+id/txtBox_opIntensity"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:text="Ops (FLOPS/byte)"/>
+        android:id="@+id/txtBox_maxThreads"
+        style="@style/SeekBarLabel"
+        android:text="Number Threads (Cores)"/>
 
     <SeekBar
         android:id="@+id/seekBar_maxThreads"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="140dp"
-        android:layout_height="24dp"
+        style="@style/SeekBarStyle"
         android:max="16"
         android:progress="0" />
 
     <TextView
-        android:id="@+id/txtBox_maxThreads"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:text="Number Threads (Cores)"/>
+        android:id="@+id/txtBox_threadMem"
+        style="@style/SeekBarLabel"
+        android:text="Memory Alloc. (MB)" />
 
     <SeekBar
         android:id="@+id/seekBar_threadMem"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="140dp"
-        android:layout_height="24dp"
+        style="@style/SeekBarStyle"
         android:max="@integer/maxCPUMemoryLog2"
         android:progress="@integer/maxCPUMemoryLog2" />
 
-    <TextView
-        android:id="@+id/txtBox_threadMem"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:text="Memory Alloc. (MB)" />
 
     <ToggleButton
         android:id="@+id/toggle_runRoofline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="40dp"
+        android:textColor="#ffffff"
+        android:background="@color/colorPrimary"
         android:text="@string/tab1_button" />
 
 </LinearLayout>

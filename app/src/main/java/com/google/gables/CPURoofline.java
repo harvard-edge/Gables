@@ -71,6 +71,7 @@ public class CPURoofline extends Fragment {
     private String gResultsDir = "CPURoofline";
     private CarouselView slider;
     private TextView slidePrompt;
+    private View edgeLogo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -303,6 +304,7 @@ public class CPURoofline extends Fragment {
         setupButton(rootView);
         slider = rootView.findViewById(R.id.carouselView);
         slidePrompt = rootView.findViewById(R.id.swipe_prompt);
+        edgeLogo = rootView.findViewById(R.id.edge_logo);
         return rootView;
     }
 
@@ -473,6 +475,8 @@ public class CPURoofline extends Fragment {
             };
             slider.setImageListener(imageListener);
             slider.setPageCount(2);
+            slider.setVisibility(View.VISIBLE);
+            edgeLogo.setVisibility(View.GONE);
             slidePrompt.setVisibility(View.VISIBLE);
         }
         void generatePlotData(List<CPUDataPoint> values) {

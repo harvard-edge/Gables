@@ -56,7 +56,7 @@ public class GPURoofline extends Fragment {
     private ProgressDialog gProcessDialog;
     private String gResultsDir = "GPURoofline";
     private CarouselView slider;
-    private View slidePrompt;
+    private View slidePrompt, edgeLogo;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -308,6 +308,7 @@ public class GPURoofline extends Fragment {
 
         slider = rootView.findViewById(R.id.carouselView);
         slidePrompt = rootView.findViewById(R.id.swipe_prompt);
+        edgeLogo = rootView.findViewById(R.id.edge_logo);
         return rootView;
     }
 
@@ -330,7 +331,9 @@ public class GPURoofline extends Fragment {
         };
         slider.setImageListener(imageListener);
         slider.setPageCount(2);
+        slider.setVisibility(View.VISIBLE);
         slidePrompt.setVisibility(View.VISIBLE);
+        edgeLogo.setVisibility(View.GONE);
     }
 
     public void displayGraph(String filename, ImageView view) {

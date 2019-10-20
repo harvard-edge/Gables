@@ -13,6 +13,23 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="SeekBarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+    </style>
+
+    <style name="SeekBarLabel">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">23dp</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name='android:textStyle'>bold</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
