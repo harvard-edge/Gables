@@ -117,12 +117,12 @@ public class MainActivity extends AppCompatActivity {
 //                case 1:
 //                    SOCRoofline socRoofline = new SOCRoofline();
 //                    return socRoofline;
-//                case 2:
-//                    GPURoofline gpuRoofline = new GPURoofline();
-//                    return gpuRoofline;
                 case 0:
                     CPURoofline cpuRoofline = new CPURoofline();
                     return cpuRoofline;
+                case 1:
+                    GPURoofline gpuRoofline = new GPURoofline();
+                    return gpuRoofline;
                 default:
                     return null;
             }
@@ -134,18 +134,14 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return "CPU Roofline";
                 case 1:
-                    return "SOC Roofline";
-                case 2:
                     return "GPU Roofline";
-                case 3:
-                    return "CPU Roofline";
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
     }
 }
