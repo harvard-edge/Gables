@@ -445,11 +445,12 @@ public class GPURoofline extends Fragment {
 
             gProcessDialog.setMessage("Finished processing data.");
 
+            new GablesPython().processGPURoofline();
+            setupSlider();
+
             if (gProcessDialog.isShowing()) {
                 gProcessDialog.dismiss();
             }
-            new GablesPython().processGPURoofline();
-            setupSlider();
         }
     }
 }

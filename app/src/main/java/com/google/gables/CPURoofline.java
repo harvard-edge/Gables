@@ -448,12 +448,11 @@ public class CPURoofline extends Fragment {
         protected void onPostExecute(String param) {
 
             gProcessDialog.setMessage("Finished processing data.");
-
+            new GablesPython().processCPURoofline();
+            setupSlider();
             if (gProcessDialog.isShowing()) {
                 gProcessDialog.dismiss();
             }
-            new GablesPython().processCPURoofline();
-            setupSlider();
         }
 
         private void setupSlider() {
